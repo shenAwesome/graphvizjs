@@ -1,6 +1,6 @@
 {
   "name": "@aslab/graphvizjs",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "use graphviz in browser",
   "main": "dist/graphviz.js",
   "types": "dist/index.d.ts",

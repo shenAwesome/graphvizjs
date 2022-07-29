@@ -5,22 +5,42 @@
     <style>
         svg {
             border: 1px solid gray;
+            margin: 10px;
+            margin-top: 0;
+        }
+
+        .half {
+            flex: 1 0 100px;
+            overflow: hidden;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, .1);
+            padding: .5em;
+            outline: none;
+        }
+
+        .box {
+            width: calc(100vw - 20px);
+            height: calc(100vh - 20px);
+            display: flex;
         }
     </style>
 </head>
 
 <body style="margin:10px">
-    <div style="width:calc(100vw - 20px);height:calc(100vh - 20px);display:flex;">
-        <div style="flex-grow: 1;">
-            <textarea id="dot"
-                style="width:100%;height:100%;background-color: rgba(0,0,0,.1);padding:.5em;outline:none;"></textarea>
+    <div class="box">
+        <div class="half">
+            <textarea id="dot"></textarea>
         </div>
-        <div style="overflow: auto; flex-grow: 1;">
-            <div id="chart" style="margin-left:1em;"></div>
+        <div class="half" style="overflow:auto;">
+            <div id="chart"></div>
             <div id="error" style="color:red;"></div>
             <br>
             <a href="https://renenyffenegger.ch/notes/tools/Graphviz/examples/index" target="_blank"
-                style="margin:1em;">Sample</a>
+                style="margin:10px;">Sample</a>
         </div>
     </div>
 
@@ -44,6 +64,14 @@
             dotInput.addEventListener('input', render)
             dotInput.innerHTML = `digraph D {  A -> {B, C, D} -> {F} }`
             render()
+
+            /*
+            const lm = viz.createLayoutManager()
+            lm.addNode('test1', 100, 100)
+            lm.addNode('test2', 40, 150)
+            lm.addEdge('test1', 'test2')
+            chart.innerHTML = lm.toSVG()
+            */
         })
 
     </script>

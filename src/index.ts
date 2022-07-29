@@ -81,6 +81,7 @@ class LayoutManager {
     calculate(rankdir: Rankdir = "TB") {
         const dot = `
         digraph D { 
+            node [shape=record]
             rankdir = "${rankdir}"
             ${this.nodes.map(n => n.toString()).join(' ')}
             ${this.edges.map(n => n.toString()).join(' ')}
@@ -129,6 +130,7 @@ class LayoutManager {
     toSVG(rankdir: Rankdir = "TB") {
         const dot = `
         digraph D { 
+            node [shape=record]
             rankdir = "${rankdir}"
             ${this.nodes.map(n => n.toString()).join(' ')}
             ${this.edges.map(n => n.toString()).join(' ')}
