@@ -26,24 +26,23 @@
 
     <script>
 
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
             const dotInput = document.querySelector('#dot')
             const chart = document.querySelector('#chart')
             const error = document.querySelector('#error')
-            async function render() {
+            const viz = await graphviz.initViz()
+
+            function render() {
                 chart.innerHTML = ''
                 error.innerHTML = ''
                 try {
-                    chart.innerHTML = await graphviz.layout(dotInput.value, 'svg', 'dot')
+                    chart.innerHTML = viz.layout(dotInput.value)
                 } catch (e) {
                     error.innerHTML = e
                 }
             }
             dotInput.addEventListener('input', render)
-            dotInput.innerHTML = `digraph D { 
-    A -> {B, C, D} -> {F} 
-}
-            `
+            dotInput.innerHTML = `digraph D {  A -> {B, C, D} -> {F} }`
             render()
         })
 

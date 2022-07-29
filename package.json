@@ -1,14 +1,14 @@
 {
-  "name": "vis",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@aslab/graphvizjs",
+  "version": "1.0.8",
+  "description": "use graphviz in browser",
   "main": "dist/graphviz.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alex Shen",
   "license": "ISC",
   "devDependencies": {
     "lodash": "^4.17.21",
@@ -17,7 +17,13 @@
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
   },
-  "dependencies": {
-    "typescript-declaration-webpack-plugin": "^0.2.2"
-  }
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shenAwesome/graphvizjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shenAwesome/graphvizjs/issues"
+  },
+  "homepage": "https://github.com/shenAwesome/graphvizjs#readme"
 }
