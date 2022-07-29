@@ -7,6 +7,7 @@
             border: 1px solid gray;
             margin: 10px;
             margin-top: 0;
+            max-width: calc(100% - 20px);
         }
 
         .half {
@@ -20,6 +21,8 @@
             background-color: rgba(0, 0, 0, .1);
             padding: .5em;
             outline: none;
+            resize: none;
+            border: 1px solid green;
         }
 
         .box {
@@ -30,40 +33,50 @@
     </style>
 </head>
 
-<body style="margin:10px">
+<body style="margin:10px;opacity:0;transition: all 200ms;">
     <div class="box">
         <div class="half">
             <textarea id="dot"></textarea>
         </div>
-        <div class="half" style="overflow:auto;">
+        <div class="half" style="overflow-y:auto;">
             <div id="chart"></div>
             <div id="error" style="color:red;"></div>
             <br>
-            <a href="https://renenyffenegger.ch/notes/tools/Graphviz/examples/index" target="_blank"
-                style="margin:10px;">Sample</a>
+            <a href="https://graphviz.org/gallery/" target="_blank" style="margin:10px;">Sample</a>
         </div>
     </div>
 
     <script>
-
         window.addEventListener('load', async () => {
-            const dotInput = document.querySelector('#dot')
-            const chart = document.querySelector('#chart')
-            const error = document.querySelector('#error')
-            const viz = await graphviz.initViz()
+            const viz = await graphviz.initViz(),
+                dotInput = document.querySelector('#dot'),
+                chart = document.querySelector('#chart'),
+                error = document.querySelector('#error')
 
             function render() {
                 chart.innerHTML = ''
                 error.innerHTML = ''
                 try {
                     chart.innerHTML = viz.layout(dotInput.value)
+                    const svg = chart.querySelector('svg')
+                    let width = parseInt(svg.getAttribute('width'))
+                    let height = parseInt(svg.getAttribute('height'))
+                    const maxWidth = chart.clientWidth
+                    if (width > maxWidth) {
+                        height = height * maxWidth / width
+                        width = maxWidth
+                    }
+                    svg.setAttribute('width', width)
+                    svg.setAttribute('height', height)
                 } catch (e) {
                     error.innerHTML = e
                 }
             }
+
             dotInput.addEventListener('input', render)
             dotInput.innerHTML = `digraph D {  A -> {B, C, D} -> {F} }`
             render()
+            document.body.style.opacity = 1
 
             /*
             const lm = viz.createLayoutManager()

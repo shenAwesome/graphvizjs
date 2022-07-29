@@ -17,8 +17,8 @@ class Viz {
         return this.graphviz.layout(dot, format, engine) as string
     }
 
-    createLayoutManager() {
-        return new LayoutManager(this)
+    createLayoutManager(rankdir: Rankdir = "TB") {
+        return new LayoutManager(this, rankdir)
     }
 }
 
@@ -61,28 +61,31 @@ class LayoutManager {
 
     private idMap = {} as { [string: string]: string }
 
-    constructor(private viz: Viz) {
+    constructor(private viz: Viz, private rankdir: Rankdir) {
     }
 
     addNode(id: string, width: number, height: number) {
         const autoId = (this.nodes.length + 1).toString()
         this.idMap[id] = autoId
         this.nodes.push(new Node(autoId, this.toInch(width), this.toInch(height)))
+        return this
     }
     addEdge(from: string, to: string) {
         from = this.idMap[from]
         to = this.idMap[to]
         this.edges.push(new Edge(from, to))
+        return this
     }
     addGroup(ids: string[]) {
         this.groups.push(new Group(this.groups.length + '', ids.map(id => this.idMap[id])))
+        return this
     }
 
-    calculate(rankdir: Rankdir = "TB") {
+    calculate() {
         const dot = `
         digraph D { 
             node [shape=record]
-            rankdir = "${rankdir}"
+            rankdir = "${this.rankdir}"
             ${this.nodes.map(n => n.toString()).join(' ')}
             ${this.edges.map(n => n.toString()).join(' ')}
             ${this.groups.map(n => n.toString()).join(' ')}
@@ -127,11 +130,11 @@ class LayoutManager {
         return Math.round(parseFloat(inch + '') * 96)
     }
 
-    toSVG(rankdir: Rankdir = "TB") {
+    toSVG() {
         const dot = `
         digraph D { 
             node [shape=record]
-            rankdir = "${rankdir}"
+            rankdir = "${this.rankdir}"
             ${this.nodes.map(n => n.toString()).join(' ')}
             ${this.edges.map(n => n.toString()).join(' ')}
             ${this.groups.map(n => n.toString()).join(' ')}
