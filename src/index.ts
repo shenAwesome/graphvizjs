@@ -110,8 +110,11 @@ class LayoutManager {
         this.groups.push(new Group(this.groups.length + '', ids.map(id => this.idMap[id])))
     }
 
-    calculate(rankdir: Rankdir = "TB") {
-        const engine = this.edges.length > 0 ? 'dot' : 'neato'
+    calculate(rankdir: Rankdir = "TB", engine?: VizEngine) {
+        if (!engine) {
+            engine = this.edges.length > 0 ? 'dot' : 'neato'
+        }
+
         const dot = `
         digraph D { 
             node [shape=record]
