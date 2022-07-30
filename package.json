@@ -27,6 +27,7 @@
   "homepage": "https://github.com/shenAwesome/graphvizjs#readme",
   "files": [
     "./dist/graphviz.js",
-    "./dist/index.d.ts"
+    "./dist/index.d.ts",
+    "./demo.html"
   ]
 }
