@@ -1,42 +1,63 @@
-import { GraphvizSync, graphvizSync } from "./graphviz.es6"
+import { graphvizSync } from "./graphviz.es6"
 // @ts-ignore
 import wasm from "./graphvizlib.wasm"
 
 const prom = graphvizSync(wasm)
 
 type Format = 'svg' | 'plain' | 'dot' | 'json'
-type visEngine = 'dot' | 'neato' | 'fdp' | 'sfdp' | 'circo' | 'twopi' | 'osage' | 'patchwork'
-
-let visInstance = null as Viz
+type VizEngine = 'dot' | 'neato' | 'fdp' | 'sfdp' | 'circo' | 'twopi' | 'osage' | 'patchwork'
+type Rankdir = "LR" | "TB" | "RL" | "BT"
 
 class Viz {
-    constructor(private graphviz: any) {
-    }
-    /** Layout nodes */
-    layout(dot: string, format: Format = 'svg', engine: visEngine = 'dot') {
-        return this.graphviz.layout(dot, format, engine) as string
+    private static instance = null as Viz
+
+    /**
+     * 
+     * @returns A Viz instance
+     */
+    static async create() {
+        if (!Viz.instance) {
+            const g = await prom.then()
+            Viz.instance = new Viz(g)
+        }
+        return Viz.instance
     }
 
-    createLayoutManager() {
+    /**
+     * Layout nodes asynchronously 
+     * @param dot nodes in DOT language
+     * @param format 
+     * @param engine 
+     * @returns 
+     */
+    static async layoutAsync(dot: string, format: Format = 'svg', engine: VizEngine = 'dot') {
+        const viz = await Viz.create()
+        return viz.layout(dot, format, engine)
+    }
+
+    private constructor(private graphviz: any) { }
+
+    public createLayoutManager() {
         return new LayoutManager(this)
+    }
+
+    /** Layout nodes */
+    public layout(dot: string, format: Format = 'svg', engine: VizEngine = 'dot') {
+        return this.graphviz.layout(dot, format, engine) as string
     }
 }
 
 class Node {
-    constructor(public readonly id: string, public width: number, public height: number) {
-
-    }
+    constructor(public id: string, public width: number, public height: number) { }
     callback: (x: number, y: number) => void
-
     toString() {
         const { id, width, height } = this
         return `${id} [width="${width}",height="${height}"]; `
     }
 }
-class Edge {
-    constructor(public readonly from: string, public readonly to: string) {
 
-    }
+class Edge {
+    constructor(public from: string, public to: string) { }
     toString() {
         const { from, to } = this
         return `${from} -> ${to}; `
@@ -44,23 +65,18 @@ class Edge {
 }
 
 class Group {
-    constructor(public readonly id: string, public readonly children: string[]) {
-
-    }
+    constructor(public id: string, public children: string[]) { }
     toString() {
         const { id, children } = this
         return `subgraph cluster_${id} { ${children.join(';')} };`
     }
 }
 
-type Rankdir = "LR" | "TB" | "RL" | "BT"
-
 class LayoutManager {
 
     private nodes = [] as Node[]
     private edges = [] as Edge[]
     private groups = [] as Group[]
-
     private idMap = {} as { [string: string]: string }
 
     constructor(private viz: Viz) {
@@ -112,20 +128,17 @@ class LayoutManager {
             height = toPx(paperInfo.pop()),
             width = toPx(paperInfo.pop()),
             nodes = [] as any[],
-            idmap2 = {} as { [key: string]: string }
-        Object.keys(this.idMap).forEach(k => idmap2[this.idMap[k]] = k)
+            idmap = {} as { [key: string]: string }
+        Object.keys(this.idMap).forEach(k => idmap[this.idMap[k]] = k)
 
         for (const line of lines.slice(1, -2)) {
             const [type] = line.split(' ')
             if (type == 'node') {
                 const [_, idx, x, y, w, h] = line.split(' ')
                 const node = {
-                    id: idmap2[idx],
-                    index: parseInt(idx),
-                    x: toPx(x),
-                    y: height - toPx(y),
-                    width: toPx(w),
-                    height: toPx(h),
+                    id: idmap[idx], index: parseInt(idx),
+                    x: toPx(x), y: height - toPx(y),
+                    width: toPx(w), height: toPx(h),
                 }
                 node.x = Math.max(0, Math.round(node.x - node.width / 2))
                 node.y = Math.max(0, Math.round(node.y - node.height / 2))
@@ -156,23 +169,7 @@ class LayoutManager {
  * @returns viz instance  
  */
 async function initViz() {
-    if (!visInstance) {
-        const g = await prom.then()
-        visInstance = new Viz(g)
-    }
-    return visInstance
+    return Viz.create()
 }
 
-/**
- * Layout nodes asynchronously 
- * @param dot nodes in DOT language
- * @param format 
- * @param engine 
- * @returns 
- */
-async function layout(dot: string, format: Format = 'svg', engine: visEngine = 'dot') {
-    await initViz()
-    return visInstance.layout(dot, format, engine)
-}
-
-export { layout, initViz }
+export { initViz, Viz }
