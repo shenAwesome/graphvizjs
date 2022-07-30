@@ -48,7 +48,7 @@
 
     <script>
         window.addEventListener('load', async () => {
-            const viz = await graphviz.initViz(),
+            const viz = await graphviz.Viz.create(),
                 dotInput = document.querySelector('#dot'),
                 chart = document.querySelector('#chart'),
                 error = document.querySelector('#error')

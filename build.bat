@@ -1,1 +1,2 @@
-npx webpack --mode production
+cd /d "%~dp0"
+npm run build
