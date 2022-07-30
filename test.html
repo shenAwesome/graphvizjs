@@ -78,13 +78,18 @@
             render()
             document.body.style.opacity = 1
 
-            /*
+
             const lm = viz.createLayoutManager()
-            lm.addNode('test1', 100, 100)
-            lm.addNode('test2', 40, 150)
+            lm.addNode(100, 100, 'test1', (x, y) => {
+                console.log(x, y)
+            })
+            lm.addNode(140, 150, 'test2', (x, y) => {
+                console.log(x, y)
+            })
             lm.addEdge('test1', 'test2')
-            chart.innerHTML = lm.toSVG()
-            */
+
+            const layout = lm.calculate()
+            //chart.innerHTML = layout.svg
         })
 
     </script>
